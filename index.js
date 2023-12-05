@@ -108,5 +108,11 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    tiles.forEach( (tile, index) => {
+        tile.addEventListener('click', () => userAction(tile, index));
+    });
+
+    resetButton.addEventListener('click', resetBoard);
+
 
 });
