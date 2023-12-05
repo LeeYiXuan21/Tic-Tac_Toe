@@ -39,4 +39,16 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        if (roundWon) {
+            announce(currentPlayer === 'X' ? PLAYERX_WON : PLAYERO_WON);
+            isGameActive = false;
+            return;
+        }
+
+    if (!board.includes(''))
+        announce(TIE);
+    }
+
+    
+
 });
