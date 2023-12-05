@@ -49,6 +49,16 @@ window.addEventListener('DOMContentLoaded', () => {
         announce(TIE);
     }
 
+    const isValidAction = (tile) => {
+        if (tile.innerText === 'X' || tile.innerText === 'O'){
+            return false;
+        }
+
+        return true;
+    };
+
+    
+
     const announce = (type) => {
         switch(type){
             case PLAYERO_WON:
@@ -61,8 +71,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 announcer.innerText = 'Tie';
         }
         announcer.classList.remove('hide');
-    };
-
+    };  
 
 
 });
