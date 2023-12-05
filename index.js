@@ -57,6 +57,10 @@ window.addEventListener('DOMContentLoaded', () => {
         return true;
     };
 
+    const updateBoard =  (index) => {
+        board[index] = currentPlayer;
+    }
+
     
 
     const announce = (type) => {
