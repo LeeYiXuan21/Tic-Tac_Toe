@@ -25,56 +25,58 @@ window.addEventListener('DOMContentLoaded', () => {
         [2, 5, 8],
         [0, 4, 8],
         [2, 4, 6]
-    ];    
-    
+    ];
+
     const PLAYERO_WON = 'PLAYERO_WON';
-const PLAYERX_WON = 'PLAYERX_WON';
-const TIE = 'TIE';
+    const PLAYERX_WON = 'PLAYERX_WON';
+    const TIE = 'TIE';
 
     const startNewGame = () => {
-        playerXName = playerXNameInput.value;
-        playerOName = playerONameInput.value;
+        playerXName = playerXNameInput.value || 'Player X';
+        playerOName = playerONameInput.value || 'Player O';
     
         if (playerXName && playerOName) {
             // Initialize the game with player names
             gameIdInput.value = 'Game123'; // Replace with actual game ID
-            playerDisplay.innerText = `${playerXName}'s turn`;
+            currentPlayer = 'X'; // Set initial player
+            playerDisplay.innerText = `${playerXName}`;
             startGameButton.disabled = true; // Disable the button after starting the game
         } else {
             alert('Please enter names for both players.');
         }
     };
+    
 
     // Event listener for the "Start Game" button
     startGameButton.addEventListener('click', startNewGame);
 
     function handleResultValidation() {
         let roundWon = false;
-    
+
         // Check winning conditions
         for (let i = 0; i <= 7; i++) {
             const winCondition = winningConditions[i];
             const a = board[winCondition[0]];
             const b = board[winCondition[1]];
             const c = board[winCondition[2]];
-    
+
             if (a === '' || b === '' || c === '') {
                 continue;
             }
-    
+
             if (a === b && b === c) {
                 roundWon = true;
                 break;
             }
         }
-    
+
         // Check for a tie
         if (!roundWon && !board.includes('')) {
             announce(TIE);
             isGameActive = false;
             return;
         }
-    
+
         // Check if a player has won
         if (roundWon) {
             announce(currentPlayer === 'X' ? PLAYERX_WON : PLAYERO_WON);
@@ -82,36 +84,35 @@ const TIE = 'TIE';
             return;
         }
     }
-    
+
     // Function to announce the result
-    function announce(type) {
-        const announcer = document.querySelector('.announcer');
-    
+    const announce = (type) => {
+        let winnerName = type === PLAYERX_WON ? playerXName : (type === PLAYERO_WON ? playerOName : '');
+
         switch (type) {
             case PLAYERO_WON:
-                announcer.innerHTML = 'Player <span class="playerO">O</span> Won';
+                announcer.innerHTML = `Player <span class="playerO">${winnerName}</span> Won`;
                 break;
             case PLAYERX_WON:
-                announcer.innerHTML = 'Player <span class="playerX">X</span> Won';
+                announcer.innerHTML = `Player <span class="playerX">${winnerName}</span> Won`;
                 break;
             case TIE:
                 announcer.innerText = 'Tie';
         }
-    
         announcer.classList.remove('hide');
-    }
-    
+    };
 
     const updateBoard = (index) => {
         board[index] = currentPlayer;
-    }
+    };
 
     const changePlayer = () => {
-        playerDisplay.classList.remove(`player${currentPlayer}`);
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        playerDisplay.innerText = currentPlayer;
+        const playerName = currentPlayer === 'X' ? playerXName : playerOName;
+        playerDisplay.innerText = `${playerName}`;
+        playerDisplay.classList.remove('playerX', 'playerO');
         playerDisplay.classList.add(`player${currentPlayer}`);
-    }
+    };
 
     const userAction = (tile, index) => {
         if (isValidAction(tile) && isGameActive) {
@@ -120,7 +121,6 @@ const TIE = 'TIE';
             updateBoard(index);
             handleResultValidation();
             changePlayer();
-            playerDisplay.innerText = `${currentPlayer === 'X' ? playerXName : playerOName}`;
         }
     };
 
@@ -129,7 +129,7 @@ const TIE = 'TIE';
             return false;
         }
         return true;
-    };    
+    };
 
     const resetBoard = () => {
         board = ['', '', '', '', '', '', '', '', ''];
@@ -145,7 +145,7 @@ const TIE = 'TIE';
             tile.classList.remove('playerX');
             tile.classList.remove('playerO');
         });
-    }
+    };
 
     tiles.forEach((tile, index) => {
         tile.addEventListener('click', () => userAction(tile, index));
@@ -181,7 +181,7 @@ const TIE = 'TIE';
             console.error('Error retrieving past games:', error);
         }
     });
-
 });
+
 
 
