@@ -1,53 +1,58 @@
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="style.css">
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
-        <script src="index.js"></script>
-        <title>Tic Tac Toe</title>
-    </head>
-    <body>
-        <main class="background">
-            <section class="title">
-                <h1>Tic Tac Toe</h1>
-            </section>
-            <section>
-                <button id="getPastGames">Get Past Games</button>
-                <div id="pastGames"></div>
-            </section>
-            <section>
-                <label for="gameId">Enter Game ID:</label>
-    <input type="text" id="gameId" placeholder="Game Session 1, 2, 3, etc.">
-            </section>
-            <section>
-                <label for="playerXName">Player X Name:</label>
-                <input type="text" id="playerXName" placeholder="Enter name for Player X">
-            </section>
-            <section>
-                <label for="playerOName">Player O Name:</label>
-                <input type="text" id="playerOName" placeholder="Enter name for Player O">
-            </section>            
-            <section class="display">
-                Player <span class="display-player playerX">X</span>'s turn
-            </section>
-            <section class="container">
-                <div class="tile"></div>
-                <div class="tile"></div>
-                <div class="tile"></div>
-                <div class="tile"></div>
-                <div class="tile"></div>
-                <div class="tile"></div>
-                <div class="tile"></div>
-                <div class="tile"></div>
-                <div class="tile"></div>
-            </section>
-            <section class="display announcer hide"></section>
-            <section class="controls">
-                <button id="reset">Reset</button>
-            </section>
-        </main>
-    </body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+    <script src="index.js"></script>
+    <title>Tic Tac Toe</title>
+</head>
+
+<body>
+    <main class="background">
+        <section class="title">
+            <h1>Tic Tac Toe</h1>
+        </section>
+        <section>
+            <button id="getPastGames">Get Past Games</button>
+            <div id="pastGames"></div>
+        </section>
+        <section>
+            <label for="gameId">Enter Game ID:</label>
+            <input type="text" id="gameId" placeholder="Game Session 1, 2, 3, etc.">
+        </section>
+        <section>
+            <label for="playerXName">Player X Name:</label>
+            <input type="text" id="playerXName" placeholder="Enter name for Player X">
+        </section>
+        <section>
+            <label for="playerOName">Player O Name:</label>
+            <input type="text" id="playerOName" placeholder="Enter name for Player O">
+        </section>
+        <section class="display">
+            Player <span class="display-player playerX">X</span>'s turn
+        </section>
+        <section class="container">
+            <div class="tile"></div>
+            <div class="tile"></div>
+            <div class="tile"></div>
+            <div class="tile"></div>
+            <div class="tile"></div>
+            <div class="tile"></div>
+            <div class="tile"></div>
+            <div class="tile"></div>
+            <div class="tile"></div>
+        </section>
+        <section class="display announcer hide"></section>
+        <section class="controls">
+            <button id="startGame">Start Game</button>
+            <button id="reset">Reset</button>
+        </section>
+    </main>
+</body>
+
 </html>

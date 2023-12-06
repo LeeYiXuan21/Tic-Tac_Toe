@@ -10,7 +10,7 @@ const activeGameSessions = [];
 
 // Function to generate a unique game ID
 const generateUniqueGameId = () => {
-    return Math.random().toString(36).substr(2, 9);
+    return `Game_${Math.floor(Math.random() * 1000)}`;
 };
 
 // Function to find a game session by ID
@@ -19,12 +19,12 @@ const findGameSessionById = (gameId) => {
 };
 
 // Function to announce the winner and end the game
-const endGame = (gameSession) => {
-    // Your existing logic to determine the winner and announce goes here
+const announceWinner = (board) => {
+    // Your existing logic to determine the winner goes here
     // For simplicity, let's assume a function announceWinner exists
 
-    const winner = announceWinner(gameSession.board);
-    gameSession.isGameActive = false;
+    // Placeholder logic:
+    const winner = 'X'; // Replace with actual winner determination logic
 
     return winner;
 };
@@ -33,19 +33,17 @@ app.post('/startGame', (req, res) => {
     // Generate a unique game ID
     const gameId = generateUniqueGameId();
 
-    if (findGameSessionById(gameId)) {
+    // Check if the game ID is already in use
+    const existingGame = findGameSessionById(gameId);
+    if (existingGame) {
         res.status(400).json({ error: 'Game ID already in use.' });
     } else {
-        const { playerXName, playerOName } = req.body;
-
+        // Create a new game session
         const newGameSession = {
             id: gameId,
             board: ['', '', '', '', '', '', '', '', ''],
             currentPlayer: 'X',
-            players: {
-                'X': playerXName,
-                'O': playerOName,
-            },
+            players: {},
             isGameActive: true,
         };
 
@@ -72,7 +70,7 @@ app.post('/makeMove/:gameId', (req, res) => {
             gameSession.players[gameSession.currentPlayer] = playerName;
 
             // Check for a winner or a tie
-            const winner = endGame(gameSession);
+            const winner = announceWinner(gameSession.board);
 
             // Switch player for the next turn
             gameSession.currentPlayer = gameSession.currentPlayer === 'X' ? 'O' : 'X';
@@ -106,14 +104,14 @@ app.use(express.static('public'));
 
 app.get('/getPastGames', (req, res) => {
     // Retrieve past games with helpful information
-    const pastGamesInfo = activeGameSessions.map(session => ({
+    const pastGamesData = activeGameSessions.map(session => ({
         id: session.id,
-        winner: endGame(session),
+        winner: announceWinner(session.board),
         playerNames: Object.values(session.players),
         moves: session.board,
     }));
 
-    res.json({ pastGames: pastGamesInfo });
+    res.json({ pastGames: pastGames.concat(pastGamesData) });
 });
 
 // Start the server

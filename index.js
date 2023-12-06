@@ -5,79 +5,40 @@ window.addEventListener('DOMContentLoaded', () => {
     const announcer = document.querySelector('.announcer');
     const playerXNameInput = document.getElementById('playerXName');
     const playerONameInput = document.getElementById('playerOName');
-    const startButton = document.getElementById('start');
     const gameIdInput = document.getElementById('gameId');
     const getPastGamesButton = document.getElementById('getPastGames');
     const pastGamesContainer = document.getElementById('pastGames');
+    const startGameButton = document.getElementById('startGame'); // New button
 
     let board = ['', '', '', '', '', '', '', '', ''];
     let currentPlayer = 'X';
     let isGameActive = true;
     let playerXName = '';
     let playerOName = '';
-    let gameId = '';
 
-    const PLAYERX_WON = 'PLAYERX_WON';
-    const PLAYERO_WON = 'PLAYERO_WON';
-    const TIE = 'TIE';
-
-    const winningConditions = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
-    ];
-
-    const saveGame = async (gameData) => {
-        try {
-            const response = await fetch('/saveGame', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(gameData),
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                console.log('Game saved successfully');
-            } else {
-                console.error('Failed to save game');
-            }
-        } catch (error) {
-            console.error('Error saving game:', error);
-        }
-    };
-
-    const startNewGame = async () => {
+    // New function to start a new game
+    const startNewGame = () => {
         playerXName = playerXNameInput.value;
         playerOName = playerONameInput.value;
 
-        // Fetch or generate a game ID
-        // Replace the following line with your logic to get or generate a game ID
-        gameId = ''; // Replace this with your logic
+        if (playerXName && playerOName) {
+            // Initialize the game with player names
+            // (You can add logic to handle game initialization here)
 
-        // Save initial game state
-        const initialGameData = {
-            id: gameId,
-            playerNames: [playerXName, playerOName],
-            moves: [],
-            winner: null,
-        };
+            // For example, you can send a request to the server to start a new game
+            // and get a unique game ID, then update the UI accordingly.
 
-        await saveGame(initialGameData);
-
-        // Initialize the game state
-        resetBoard();
-        gameIdInput.value = gameId;
+            // Placeholder logic:
+            gameIdInput.value = 'Game123'; // Replace with actual game ID
+            playerDisplay.innerText = `${playerXName}'s turn`;
+            startGameButton.disabled = true; // Disable the button after starting the game
+        } else {
+            alert('Please enter names for both players.');
+        }
     };
 
-    startButton.addEventListener('click', startNewGame);
+    // Event listener for the "Start Game" button
+    startGameButton.addEventListener('click', startNewGame);
 
     function handleResultValidation() {
         let roundWon = false;
@@ -101,10 +62,8 @@ window.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!board.includes('')) {
+        if (!board.includes(''))
             announce(TIE);
-            isGameActive = false;
-        }
     }
 
     const isValidAction = (tile) => {
@@ -117,14 +76,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const updateBoard = (index) => {
         board[index] = currentPlayer;
-    };
+    }
 
     const changePlayer = () => {
         playerDisplay.classList.remove(`player${currentPlayer}`);
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
         playerDisplay.innerText = currentPlayer;
         playerDisplay.classList.add(`player${currentPlayer}`);
-    };
+    }
 
     const userAction = (tile, index) => {
         if (isValidAction(tile) && isGameActive) {
@@ -132,17 +91,17 @@ window.addEventListener('DOMContentLoaded', () => {
             tile.classList.add(`player${currentPlayer}`);
             updateBoard(index);
             handleResultValidation();
-            changePlayer();
+            changePlayer();  // Make sure to call changePlayer after a valid move
         }
-    };
+    }
 
     const announce = (type) => {
         switch (type) {
             case PLAYERO_WON:
-                announcer.innerHTML = `Player ${playerOName} (O) Won`;
+                announcer.innerHTML = 'Player <span class="playerO">O</span> Won';
                 break;
             case PLAYERX_WON:
-                announcer.innerHTML = `Player ${playerXName} (X) Won`;
+                announcer.innerHTML = 'Player <span class="playerX">X</span> Won';
                 break;
             case TIE:
                 announcer.innerText = 'Tie';
@@ -153,5 +112,54 @@ window.addEventListener('DOMContentLoaded', () => {
     const resetBoard = () => {
         board = ['', '', '', '', '', '', '', '', ''];
         isGameActive = true;
-        an
+        announcer.classList.add('hide');
+
+        if (currentPlayer === 'O') {
+            changePlayer();
+        }
+
+        tiles.forEach(tile => {
+            tile.innerText = '';
+            tile.classList.remove('playerX');
+            tile.classList.remove('playerO');
+        });
+    }
+
+    tiles.forEach((tile, index) => {
+        tile.addEventListener('click', () => userAction(tile, index));
+    });
+
+    resetButton.addEventListener('click', resetBoard);
+
+    getPastGamesButton.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/getPastGames', { method: 'GET' });
+            const data = await response.json();
+
+            // Clear previous past games
+            pastGamesContainer.innerHTML = '';
+
+            if (data.pastGames.length > 0) {
+                // Display past games
+                data.pastGames.forEach(game => {
+                    const gameInfo = document.createElement('div');
+                    gameInfo.innerHTML = `
+                        <p>Game ID: ${game.id}</p>
+                        <p>Winner: ${game.winner || 'Tie'}</p>
+                        <p>Players: ${game.playerNames.join(' vs ')}</p>
+                        <p>Moves: ${game.moves.join(', ')}</p>
+                        <hr>
+                    `;
+                    pastGamesContainer.appendChild(gameInfo);
+                });
+            } else {
+                pastGamesContainer.innerHTML = '<p>No past games available.</p>';
+            }
+        } catch (error) {
+            console.error('Error retrieving past games:', error);
+        }
+    });
+
+});
+
 
