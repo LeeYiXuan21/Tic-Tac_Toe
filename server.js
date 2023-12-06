@@ -5,6 +5,7 @@ const port = 3000;
 
 app.use(bodyParser.json());
 
+let pastGames = [];
 const activeGameSessions = [];
 
 // Function to find a game session by ID
@@ -74,6 +75,27 @@ app.post('/makeMove/:gameId', (req, res) => {
     }
 });
 
+// Endpoint to save a game
+app.post('/saveGame', (req, res) => {
+    const { gameId, winner, playerNames, moves } = req.body;
+
+    const savedGame = {
+        id: gameId,
+        winner,
+        playerNames,
+        moves,
+    };
+
+    pastGames.push(savedGame);
+
+    res.json({ success: true });
+});
+
+
+// Serve static files (HTML, CSS, JS)
+app.use(express.static('public'));
+
+
 app.get('/getPastGames', (req, res) => {
     // Retrieve past games with helpful information
     const pastGames = activeGameSessions.map(session => ({
@@ -86,6 +108,9 @@ app.get('/getPastGames', (req, res) => {
     res.json({ pastGames });
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
+

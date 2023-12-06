@@ -4,7 +4,9 @@ window.addEventListener('DOMContentLoaded', () => {
     const resetButton = document.querySelector('#reset');
     const announcer = document.querySelector('.announcer');
     const gameIdInput = document.getElementById('gameId');
-    
+    const getPastGamesButton = document.getElementById('getPastGames');
+    const pastGamesContainer = document.getElementById('pastGames');
+
     let board = ['', '', '', '', '', '', '', '', ''];
     let currentPlayer = 'X';
     let isGameActive = true;
@@ -23,6 +25,28 @@ window.addEventListener('DOMContentLoaded', () => {
         [0, 4, 8],
         [2, 4, 6]
     ];
+
+    const saveGame = async (gameData) => {
+        try {
+            const response = await fetch('/saveGame', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(gameData),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                console.log('Game saved successfully');
+            } else {
+                console.error('Failed to save game');
+            }
+        } catch (error) {
+            console.error('Error saving game:', error);
+        }
+    };
 
     function handleResultValidation() {
         let roundWon = false;
@@ -115,5 +139,33 @@ window.addEventListener('DOMContentLoaded', () => {
 
     resetButton.addEventListener('click', resetBoard);
 
+    getPastGamesButton.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/getPastGames', { method: 'GET' });
+            const data = await response.json();
+
+            // Clear previous past games
+            pastGamesContainer.innerHTML = '';
+
+            if (data.pastGames.length > 0) {
+                // Display past games
+                data.pastGames.forEach(game => {
+                    const gameInfo = document.createElement('div');
+                    gameInfo.innerHTML = `
+                        <p>Game ID: ${game.id}</p>
+                        <p>Winner: ${game.winner || 'Tie'}</p>
+                        <p>Players: ${game.playerNames.join(' vs ')}</p>
+                        <p>Moves: ${game.moves.join(', ')}</p>
+                        <hr>
+                    `;
+                    pastGamesContainer.appendChild(gameInfo);
+                });
+            } else {
+                pastGamesContainer.innerHTML = '<p>No past games available.</p>';
+            }
+        } catch (error) {
+            console.error('Error retrieving past games:', error);
+        }
+    });
 
 });
