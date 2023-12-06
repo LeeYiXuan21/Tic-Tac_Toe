@@ -28,7 +28,8 @@ window.addEventListener('DOMContentLoaded', () => {
     ];    
     
     const PLAYERO_WON = 'PLAYERO_WON';
-    const PLAYERX_WON = 'PLAYERX_WON';
+const PLAYERX_WON = 'PLAYERX_WON';
+const TIE = 'TIE';
 
     const startNewGame = () => {
         playerXName = playerXNameInput.value;
@@ -49,28 +50,55 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function handleResultValidation() {
         let roundWon = false;
+    
+        // Check winning conditions
         for (let i = 0; i <= 7; i++) {
             const winCondition = winningConditions[i];
             const a = board[winCondition[0]];
             const b = board[winCondition[1]];
             const c = board[winCondition[2]];
+    
             if (a === '' || b === '' || c === '') {
                 continue;
             }
+    
             if (a === b && b === c) {
                 roundWon = true;
                 break;
             }
         }
     
+        // Check for a tie
+        if (!roundWon && !board.includes('')) {
+            announce(TIE);
+            isGameActive = false;
+            return;
+        }
+    
+        // Check if a player has won
         if (roundWon) {
             announce(currentPlayer === 'X' ? PLAYERX_WON : PLAYERO_WON);
             isGameActive = false;
             return;
         }
+    }
     
-        if (!board.includes(''))
-            announce(TIE);
+    // Function to announce the result
+    function announce(type) {
+        const announcer = document.querySelector('.announcer');
+    
+        switch (type) {
+            case PLAYERO_WON:
+                announcer.innerHTML = 'Player <span class="playerO">O</span> Won';
+                break;
+            case PLAYERX_WON:
+                announcer.innerHTML = 'Player <span class="playerX">X</span> Won';
+                break;
+            case TIE:
+                announcer.innerText = 'Tie';
+        }
+    
+        announcer.classList.remove('hide');
     }
     
 
@@ -102,20 +130,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         return true;
     };    
-
-    const announce = (type) => {
-        switch (type) {
-            case PLAYERO_WON:
-                announcer.innerHTML = 'Player <span class="playerO">O</span> Won';
-                break;
-            case PLAYERX_WON:
-                announcer.innerHTML = 'Player <span class="playerX">X</span> Won';
-                break;
-            case TIE:
-                announcer.innerText = 'Tie';
-        }
-        announcer.classList.remove('hide');
-    };
 
     const resetBoard = () => {
         board = ['', '', '', '', '', '', '', '', ''];
