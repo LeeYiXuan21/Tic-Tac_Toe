@@ -16,6 +16,18 @@ window.addEventListener('DOMContentLoaded', () => {
     let playerXName = '';
     let playerOName = '';
 
+    const winningConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ];    
+    
+
     // New function to start a new game
     const startNewGame = () => {
         playerXName = playerXNameInput.value;
@@ -55,24 +67,17 @@ window.addEventListener('DOMContentLoaded', () => {
                 break;
             }
         }
-
+    
         if (roundWon) {
             announce(currentPlayer === 'X' ? PLAYERX_WON : PLAYERO_WON);
             isGameActive = false;
             return;
         }
-
+    
         if (!board.includes(''))
             announce(TIE);
     }
-
-    const isValidAction = (tile) => {
-        if (tile.innerText === 'X' || tile.innerText === 'O') {
-            return false;
-        }
-
-        return true;
-    };
+    
 
     const updateBoard = (index) => {
         board[index] = currentPlayer;
