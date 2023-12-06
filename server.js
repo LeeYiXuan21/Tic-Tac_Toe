@@ -7,9 +7,25 @@ app.use(bodyParser.json());
 
 const activeGameSessions = [];
 
+// Function to find a game session by ID
+const findGameSessionById = (gameId) => {
+    return activeGameSessions.find(session => session.id === gameId);
+};
+
+// Function to announce the winner and end the game
+const endGame = (gameSession) => {
+    // Your existing logic to determine the winner and announce goes here
+    // For simplicity, let's assume a function announceWinner exists
+
+    const winner = announceWinner(gameSession.board);
+    gameSession.isGameActive = false;
+
+    return winner;
+};
+
 app.post('/startGame', (req, res) => {
     const gameId = req.query.gameId;
-    const existingGame = activeGameSessions.find(session => session.id === gameId);
+    const existingGame = findGameSessionById(gameId);
 
     if (existingGame) {
         res.status(400).json({ error: 'Game ID already in use.' });
@@ -30,41 +46,44 @@ app.post('/startGame', (req, res) => {
 
 app.post('/makeMove/:gameId', (req, res) => {
     const gameId = req.params.gameId;
-    const { index } = req.body;
-    const gameSession = activeGameSessions.find(session => session.id === gameId);
+    const gameSession = findGameSessionById(gameId);
 
     if (!gameSession) {
         res.status(404).json({ error: 'Game not found.' });
     } else if (!gameSession.isGameActive) {
         res.status(400).json({ error: 'Game has ended.' });
     } else {
-        // Your existing move validation and handling logic will go here
+        const { index, playerName } = req.body;
 
-        res.json({ board: gameSession.board, currentPlayer: gameSession.currentPlayer });
+        // Validate the move and update the board
+        if (gameSession.board[index] === '') {
+            gameSession.board[index] = gameSession.currentPlayer;
+            gameSession.players[gameSession.currentPlayer] = playerName;
+
+            // Check for a winner or a tie
+            const winner = endGame(gameSession);
+
+            // Switch player for the next turn
+            gameSession.currentPlayer = gameSession.currentPlayer === 'X' ? 'O' : 'X';
+
+            // Respond with the updated game state
+            res.json({ board: gameSession.board, currentPlayer: gameSession.currentPlayer, winner });
+        } else {
+            res.status(400).json({ error: 'Invalid move.' });
+        }
     }
 });
 
-app.post('/endGame/:gameId', (req, res) => {
-    const gameId = req.params.gameId;
-    const gameSession = activeGameSessions.find(session => session.id === gameId);
+app.get('/getPastGames', (req, res) => {
+    // Retrieve past games with helpful information
+    const pastGames = activeGameSessions.map(session => ({
+        id: session.id,
+        winner: endGame(session),
+        playerNames: Object.values(session.players),
+        moves: session.board,
+    }));
 
-    if (!gameSession) {
-        res.status(404).json({ error: 'Game not found.' });
-    } else {
-        // Announce the winner and mark the game as inactive
-        // You can integrate this logic with your existing announce function
-        gameSession.isGameActive = false;
-
-        // Retrieve past games with helpful information
-        const pastGames = activeGameSessions.map(session => ({
-            id: session.id,
-            winner: /* logic to determine the winner */,
-            playerNames: /* logic to get player names */,
-            moves: /* array of past moves */,
-        }));
-
-        res.json({ pastGames });
-    }
+    res.json({ pastGames });
 });
 
 app.listen(port, () => {
