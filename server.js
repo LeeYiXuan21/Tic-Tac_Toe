@@ -8,6 +8,11 @@ app.use(bodyParser.json());
 let pastGames = [];
 const activeGameSessions = [];
 
+// Function to generate a unique game ID
+const generateUniqueGameId = () => {
+    return Math.random().toString(36).substr(2, 9);
+};
+
 // Function to find a game session by ID
 const findGameSessionById = (gameId) => {
     return activeGameSessions.find(session => session.id === gameId);
@@ -25,17 +30,22 @@ const endGame = (gameSession) => {
 };
 
 app.post('/startGame', (req, res) => {
-    const gameId = req.query.gameId;
-    const existingGame = findGameSessionById(gameId);
+    // Generate a unique game ID
+    const gameId = generateUniqueGameId();
 
-    if (existingGame) {
+    if (findGameSessionById(gameId)) {
         res.status(400).json({ error: 'Game ID already in use.' });
     } else {
+        const { playerXName, playerOName } = req.body;
+
         const newGameSession = {
             id: gameId,
             board: ['', '', '', '', '', '', '', '', ''],
             currentPlayer: 'X',
-            players: {},
+            players: {
+                'X': playerXName,
+                'O': playerOName,
+            },
             isGameActive: true,
         };
 
@@ -91,21 +101,19 @@ app.post('/saveGame', (req, res) => {
     res.json({ success: true });
 });
 
-
 // Serve static files (HTML, CSS, JS)
 app.use(express.static('public'));
 
-
 app.get('/getPastGames', (req, res) => {
     // Retrieve past games with helpful information
-    const pastGames = activeGameSessions.map(session => ({
+    const pastGamesInfo = activeGameSessions.map(session => ({
         id: session.id,
         winner: endGame(session),
         playerNames: Object.values(session.players),
         moves: session.board,
     }));
 
-    res.json({ pastGames });
+    res.json({ pastGames: pastGamesInfo });
 });
 
 // Start the server
@@ -113,4 +121,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-
