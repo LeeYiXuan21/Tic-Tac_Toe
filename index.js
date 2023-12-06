@@ -27,20 +27,15 @@ window.addEventListener('DOMContentLoaded', () => {
         [2, 4, 6]
     ];    
     
+    const PLAYERO_WON = 'PLAYERO_WON';
+    const PLAYERX_WON = 'PLAYERX_WON';
 
-    // New function to start a new game
     const startNewGame = () => {
         playerXName = playerXNameInput.value;
         playerOName = playerONameInput.value;
-
+    
         if (playerXName && playerOName) {
             // Initialize the game with player names
-            // (You can add logic to handle game initialization here)
-
-            // For example, you can send a request to the server to start a new game
-            // and get a unique game ID, then update the UI accordingly.
-
-            // Placeholder logic:
             gameIdInput.value = 'Game123'; // Replace with actual game ID
             playerDisplay.innerText = `${playerXName}'s turn`;
             startGameButton.disabled = true; // Disable the button after starting the game
@@ -96,9 +91,17 @@ window.addEventListener('DOMContentLoaded', () => {
             tile.classList.add(`player${currentPlayer}`);
             updateBoard(index);
             handleResultValidation();
-            changePlayer();  // Make sure to call changePlayer after a valid move
+            changePlayer();
+            playerDisplay.innerText = `${currentPlayer === 'X' ? playerXName : playerOName}`;
         }
-    }
+    };
+
+    const isValidAction = (tile) => {
+        if (tile.innerText === 'X' || tile.innerText === 'O') {
+            return false;
+        }
+        return true;
+    };    
 
     const announce = (type) => {
         switch (type) {
