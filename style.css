@@ -13,8 +13,8 @@
 .title {
     color: white;
     text-align: center;
-    font-size: 40px;
-    margin-top: 5%;
+    font-size: 30px;
+    margin-top: 1%;
 }
 
 .display {
@@ -35,7 +35,6 @@
     grid-template-columns: 33% 33% 33%;
     grid-template-rows: 33% 33% 33%;
     max-width: 300px;
-
 }
 
 .tile {
@@ -70,9 +69,9 @@
     padding: 8px;
     border-radius: 8px;
     border: none;
-    font-size: 20px;
-    margin-left: 1em;
+    font-size: 16px; /* Adjusted font size */
     cursor: pointer;
+    margin-left: 10px; /* Added margin for spacing */
 }
 
 .restart {
@@ -80,5 +79,101 @@
 }
 
 #reset {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: purple;
+}
+
+/* Styles for the container holding past games, game ID, and names */
+#nameContainer {
+    display: flex;
+    justify-content: space-around; /* Centered the names */
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* Styles for game ID */
+#gameId {
+    font-size: 16px; /* Adjusted font size */
+    color: #fff;
+}
+
+/* Styles for past games container */
+#pastGames {
+    width: 50%;
+    max-width: 600px;
+}
+
+/* Styles for each past game */
+.pastGame {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+/* Styles for the "Get Past Games" button */
+#getPastGames {
+    font-size: 16px;
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+/* Styles for form sections */
+section {
+    margin-bottom: 10px;
+}
+
+/* Styles for labels */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #fff;
+}
+
+/* Styles for input fields */
+input {
+    width: 150px;
+    padding: 6px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Placeholder color for input fields */
+input::placeholder {
+    color: #888;
+}
+
+/* Style for focused input fields */
+input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+/* Styles for the container holding the start game button */
+#startGameContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* Styles for the start game button */
+#startGame {
+    font-size: 16px; /* Adjusted font size */
+    padding: 8px 16px; /* Adjusted padding */
+    background-color: #a42ecc;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+#startGame:disabled {
+    background-color: #95a5a6;
 }

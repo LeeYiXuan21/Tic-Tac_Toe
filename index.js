@@ -39,12 +39,12 @@ window.addEventListener('DOMContentLoaded', () => {
             // Initialize the game with player names
             gameIdInput.value = 'Game123'; // Replace with actual game ID
             currentPlayer = 'X'; // Set initial player
-            playerDisplay.innerText = `${playerXName}`;
+            playerDisplay.innerText = `${currentPlayer === 'X' ? playerXName : playerOName}`;
             startGameButton.disabled = true; // Disable the button after starting the game
         } else {
             alert('Please enter names for both players.');
         }
-    };
+    };    
     
 
     // Event listener for the "Start Game" button
@@ -113,6 +113,7 @@ window.addEventListener('DOMContentLoaded', () => {
         playerDisplay.classList.remove('playerX', 'playerO');
         playerDisplay.classList.add(`player${currentPlayer}`);
     };
+    
 
     const userAction = (tile, index) => {
         if (isValidAction(tile) && isGameActive) {
