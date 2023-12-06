@@ -3,6 +3,9 @@ window.addEventListener('DOMContentLoaded', () => {
     const playerDisplay = document.querySelector('.display-player');
     const resetButton = document.querySelector('#reset');
     const announcer = document.querySelector('.announcer');
+    const playerXNameInput = document.getElementById('playerXName');
+    const playerONameInput = document.getElementById('playerOName');
+    const startButton = document.getElementById('start');
     const gameIdInput = document.getElementById('gameId');
     const getPastGamesButton = document.getElementById('getPastGames');
     const pastGamesContainer = document.getElementById('pastGames');
@@ -10,6 +13,9 @@ window.addEventListener('DOMContentLoaded', () => {
     let board = ['', '', '', '', '', '', '', '', ''];
     let currentPlayer = 'X';
     let isGameActive = true;
+    let playerXName = '';
+    let playerOName = '';
+    let gameId = '';
 
     const PLAYERX_WON = 'PLAYERX_WON';
     const PLAYERO_WON = 'PLAYERO_WON';
@@ -48,6 +54,31 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const startNewGame = async () => {
+        playerXName = playerXNameInput.value;
+        playerOName = playerONameInput.value;
+
+        // Fetch or generate a game ID
+        // Replace the following line with your logic to get or generate a game ID
+        gameId = ''; // Replace this with your logic
+
+        // Save initial game state
+        const initialGameData = {
+            id: gameId,
+            playerNames: [playerXName, playerOName],
+            moves: [],
+            winner: null,
+        };
+
+        await saveGame(initialGameData);
+
+        // Initialize the game state
+        resetBoard();
+        gameIdInput.value = gameId;
+    };
+
+    startButton.addEventListener('click', startNewGame);
+
     function handleResultValidation() {
         let roundWon = false;
         for (let i = 0; i <= 7; i++) {
@@ -70,102 +101,57 @@ window.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-    if (!board.includes(''))
-        announce(TIE);
+        if (!board.includes('')) {
+            announce(TIE);
+            isGameActive = false;
+        }
     }
 
     const isValidAction = (tile) => {
-        if (tile.innerText === 'X' || tile.innerText === 'O'){
+        if (tile.innerText === 'X' || tile.innerText === 'O') {
             return false;
         }
 
         return true;
     };
 
-    const updateBoard =  (index) => {
+    const updateBoard = (index) => {
         board[index] = currentPlayer;
-    }
+    };
 
     const changePlayer = () => {
         playerDisplay.classList.remove(`player${currentPlayer}`);
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
         playerDisplay.innerText = currentPlayer;
         playerDisplay.classList.add(`player${currentPlayer}`);
-    }
+    };
 
     const userAction = (tile, index) => {
-        if(isValidAction(tile) && isGameActive) {
+        if (isValidAction(tile) && isGameActive) {
             tile.innerText = currentPlayer;
             tile.classList.add(`player${currentPlayer}`);
             updateBoard(index);
             handleResultValidation();
             changePlayer();
         }
-    }
+    };
 
     const announce = (type) => {
-        switch(type){
+        switch (type) {
             case PLAYERO_WON:
-                announcer.innerHTML = 'Player <span class="playerO">O</span> Won';
+                announcer.innerHTML = `Player ${playerOName} (O) Won`;
                 break;
             case PLAYERX_WON:
-                announcer.innerHTML = 'Player <span class="playerX">X</span> Won';
+                announcer.innerHTML = `Player ${playerXName} (X) Won`;
                 break;
             case TIE:
                 announcer.innerText = 'Tie';
         }
         announcer.classList.remove('hide');
-    };  
+    };
 
     const resetBoard = () => {
         board = ['', '', '', '', '', '', '', '', ''];
         isGameActive = true;
-        announcer.classList.add('hide');
+        an
 
-        if (currentPlayer === 'O') {
-            changePlayer();
-        }
-
-        tiles.forEach(tile => {
-            tile.innerText = '';
-            tile.classList.remove('playerX');
-            tile.classList.remove('playerO');
-        });
-    }
-
-    tiles.forEach( (tile, index) => {
-        tile.addEventListener('click', () => userAction(tile, index));
-    });
-
-    resetButton.addEventListener('click', resetBoard);
-
-    getPastGamesButton.addEventListener('click', async () => {
-        try {
-            const response = await fetch('/getPastGames', { method: 'GET' });
-            const data = await response.json();
-
-            // Clear previous past games
-            pastGamesContainer.innerHTML = '';
-
-            if (data.pastGames.length > 0) {
-                // Display past games
-                data.pastGames.forEach(game => {
-                    const gameInfo = document.createElement('div');
-                    gameInfo.innerHTML = `
-                        <p>Game ID: ${game.id}</p>
-                        <p>Winner: ${game.winner || 'Tie'}</p>
-                        <p>Players: ${game.playerNames.join(' vs ')}</p>
-                        <p>Moves: ${game.moves.join(', ')}</p>
-                        <hr>
-                    `;
-                    pastGamesContainer.appendChild(gameInfo);
-                });
-            } else {
-                pastGamesContainer.innerHTML = '<p>No past games available.</p>';
-            }
-        } catch (error) {
-            console.error('Error retrieving past games:', error);
-        }
-    });
-
-});
